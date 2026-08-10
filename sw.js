@@ -1,11 +1,11 @@
-const CACHE_NAME = 'lottery-app-v1';
+const CACHE_NAME = 'lottery-app-v4';
 const ASSETS = [
   './',
   './index.html',
   './style.css',
   './app.js',
   './manifest.json',
-  'https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js'
+  'https://unpkg.com/tesseract.js@5/dist/tesseract.min.js'
 ];
 
 // 安装时缓存所有资源
