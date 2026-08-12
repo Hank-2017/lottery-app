@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#764ba2">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="幸运大抽奖">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="format-detection" content="telephone=no">
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect fill='%23764ba2' width='192' height='192' rx='24'/%3E%3Ctext x='96' y='120' font-size='100' text-anchor='middle' fill='white'%3E%F0%9F%8E%B0%3C/text%3E%3C/svg%3E">
+  <title>幸运大抽奖</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app">
+    <!-- 顶部导航 -->
+    <header class="header">
+      <h1>🎰 幸运大抽奖</h1>
+      <div class="points-display">
+        <span class="points-label">我的积分</span>
+        <span class="points-value" id="userPoints">0</span>
+      </div>
+    </header>
+
+    <!-- 主内容区 -->
+    <main class="main">
+      <!-- 抽奖设置 -->
+      <div class="lottery-config">
+        <label for="costInput">每次抽奖消耗：</label>
+        <input type="number" id="costInput" value="50" min="1">
+        <span>积分</span>
+      </div>
+
+      <!-- 抽奖转盘 -->
+      <div class="lottery-wheel-container">
+        <div class="wheel-pointer"></div>
+        <div class="lottery-wheel" id="lotteryWheel">
+          <!-- 奖项格子由JS动态生成 -->
+        </div>
+        <div class="wheel-center">
+          <button class="btn-draw" id="btnDraw" disabled>
+            <span class="draw-text">开始抽奖</span>
+            <span class="draw-cost" id="drawCost">50积分</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- 抽奖结果弹窗 -->
+      <div class="result-modal" id="resultModal">
+        <div class="result-content">
+          <div class="result-icon" id="resultIcon">🎉</div>
+          <h2 class="result-title" id="resultTitle">恭喜中奖！</h2>
+          <p class="result-prize" id="resultPrize">奖品名称</p>
+          <button class="btn-confirm" id="btnConfirm">确定</button>
+        </div>
+      </div>
+
+      <!-- 历史记录 -->
+      <div class="history-section">
+        <h3>📜 抽奖记录</h3>
+        <div class="history-list" id="historyList">
+          <p class="empty-tip">暂无抽奖记录</p>
+        </div>
+      </div>
+    </main>
+
+    <!-- 管理员面板 -->
+    <div class="admin-panel" id="adminPanel">
+      <div class="admin-toggle" id="adminToggle">⚙️ 管理员</div>
+      <div class="admin-content" id="adminContent">
+        <div class="admin-header">
+          <h3>管理员设置</h3>
+          <button class="btn-admin btn-exit" id="btnAdminExit">✕ 退出</button>
+        </div>
+        <div class="admin-section">
+          <h4>奖品与概率设置</h4>
+          <table class="admin-table" id="adminTable">
+            <thead>
+              <tr>
+                <th>奖项</th>
+                <th>奖品</th>
+                <th>基础概率(%)</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody id="adminTableBody">
+              <!-- 由JS动态生成 -->
+            </tbody>
+          </table>
+          <div class="admin-actions">
+            <button class="btn-admin" id="btnAddPrize">+ 添加奖项</button>
+            <button class="btn-admin btn-save" id="btnSavePrizes">保存设置</button>
+          </div>
+        </div>
+        <div class="admin-section">
+          <h4>默认抽奖消耗</h4>
+          <div class="admin-row">
+            <label>默认消耗积分：</label>
+            <input type="number" id="defaultCostInput" value="50" min="1">
+            <button class="btn-admin btn-save" id="btnSaveDefaultCost">保存</button>
+          </div>
+        </div>
+        <div class="admin-section">
+          <h4>积分充值</h4>
+          <div class="admin-row">
+            <label>充值积分：</label>
+            <input type="number" id="adminRechargeInput" placeholder="输入积分数量" min="1">
+            <button class="btn-admin btn-save" id="btnAdminRecharge">充值</button>
+          </div>
+          <div class="admin-row recharge-scan-row">
+            <label>扫码充值：</label>
+            <button class="btn-admin" id="btnScanImage">📷 上传图片识别</button>
+          </div>
+          <div class="scan-image-result" id="scanImageResult" style="display: none;">
+            <p class="scan-success">✅ 识别成功！</p>
+            <div class="admin-row">
+              <label>识别金额：</label>
+              <input type="number" id="scanImageAmount" min="1">
+              <button class="btn-admin btn-save" id="btnConfirmScanImage">确认充值</button>
+            </div>
+            <p class="scan-hint">识别不准确可手动修改金额</p>
+          </div>
+        </div>
+        <div class="admin-section">
+          <h4>数据管理</h4>
+          <div class="admin-row">
+            <button class="btn-admin btn-danger" id="btnClearHistory">清空记录</button>
+            <button class="btn-admin btn-danger" id="btnResetData">重置所有数据</button>
+          </div>
+        </div>
+        <div class="admin-footer">
+          <button class="btn-admin btn-save-exit" id="btnSaveAndExit">💾 保存并退出</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 管理员登录弹窗 -->
+    <div class="login-modal" id="loginModal">
+      <div class="login-content">
+        <h3>管理员登录</h3>
+        <input type="password" id="adminPassword" placeholder="请输入管理员密码">
+        <div class="login-actions">
+          <button class="btn-admin" id="btnLogin">登录</button>
+          <button class="btn-admin" id="btnCancelLogin">取消</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 图片上传输入（隐藏） -->
+  <input type="file" id="scanImageInput" accept="image/*" style="display: none;">
+
+  <script src="https://unpkg.com/tesseract.js@5/dist/tesseract.min.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
